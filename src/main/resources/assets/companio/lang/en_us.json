@@ -1,0 +1,22 @@
+{
+  "companio.command.loading": "Loading %s's skin…",
+  "companio.command.event_started": "Started the %s event",
+  "companio.command.name_cleared": "Companion name removed",
+  "companio.command.name_set": "Your companion is now named %s",
+  "companio.command.reloaded": "Companio configuration reloaded",
+  "companio.command.removed": "Flying companion removed",
+  "companio.command.summoned": "Flying companion %s has appeared",
+  "companio.command.summoned_default": "Steve the flying companion has appeared",
+  "companio.error.invalid_name": "Invalid player name",
+  "companio.error.invalid_profile_response": "The profile service returned invalid data",
+  "companio.error.invalid_skin_response": "The skin service returned invalid data",
+  "companio.error.name_too_long": "The companion name cannot be longer than 32 characters",
+  "companio.error.no_companion": "Create a companion first",
+  "companio.error.player_not_found": "No player with that name was found",
+  "companio.error.service_status": "The skin service responded with status code %s",
+  "companio.error.skin_load": "Could not load the skin",
+  "companio.event.orbit": "orbit",
+  "companio.event.random": "random",
+  "companio.event.spin": "360° spin",
+  "companio.event.twirl": "twirl"
+}

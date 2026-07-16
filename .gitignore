@@ -1,0 +1,24 @@
+# Gradle
+.gradle/
+build/
+out/
+
+# Minecraft development runtime
+run/
+logs/
+crash-reports/
+config/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Operating systems
+.DS_Store
+Thumbs.db
+
+# JVM crash logs
+hs_err_pid*
+replay_pid*
