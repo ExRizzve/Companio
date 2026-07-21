@@ -7,7 +7,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -32,7 +32,7 @@ public final class CompanionDisplay {
         this.level = level;
         ItemStack item = new ItemStack(Items.PLAYER_HEAD);
         if (profile != null) item.set(DataComponents.PROFILE, ResolvableProfile.createResolved(profile));
-        head = new Display.ItemDisplay(EntityType.ITEM_DISPLAY, level);
+        head = new Display.ItemDisplay(EntityTypes.ITEM_DISPLAY, level);
         head.setId(ENTITY_IDS.getAndDecrement());
         head.setItemStack(item);
         head.setItemTransform(ItemDisplayContext.FIXED);
@@ -79,7 +79,7 @@ public final class CompanionDisplay {
         discardEntity(name);
         name = null;
         if (customName == null || customName.isBlank() || head == null || level == null) return;
-        name = new Display.TextDisplay(EntityType.TEXT_DISPLAY, level);
+        name = new Display.TextDisplay(EntityTypes.TEXT_DISPLAY, level);
         name.setId(ENTITY_IDS.getAndDecrement());
         name.setText(Component.literal(customName));
         name.setBillboardConstraints(Display.BillboardConstraints.CENTER);

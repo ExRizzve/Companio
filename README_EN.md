@@ -6,7 +6,7 @@
 
 A flying companion wearing any Minecraft player's head.
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-26.1.2-62B47A?style=flat-square)](https://www.minecraft.net/)
+[![Minecraft](https://img.shields.io/badge/Minecraft-26.2-62B47A?style=flat-square)](https://www.minecraft.net/)
 [![Fabric](https://img.shields.io/badge/Loader-Fabric-DBD0B4?style=flat-square)](https://fabricmc.net/)
 [![Environment](https://img.shields.io/badge/Environment-Client-4C8BF5?style=flat-square)](#installation)
 [![License](https://img.shields.io/badge/License-All_Rights_Reserved-lightgrey?style=flat-square)](LICENSE.txt)
@@ -50,9 +50,9 @@ The mod is entirely client-side. Nothing needs to be installed on the server or 
 
 Requirements:
 
-- Minecraft Java Edition `26.1.2`;
-- Fabric Loader `0.19.2` or newer;
-- Fabric API for `26.1.2`.
+- Minecraft Java Edition `26.2`;
+- Fabric Loader `0.19.3` or newer;
+- Fabric API for `26.2`.
 
 Download the JAR from [Releases](../../releases) and place it in `.minecraft/mods`. Companio does not need to be installed on the server.
 
@@ -77,7 +77,7 @@ Development requires JDK 25.
 The resulting mod will be placed in `build/libs`:
 
 ```text
-companio-1.2+26.1.2.jar
+companio-1.2+26.2.jar
 ```
 
 ## Notes
