@@ -77,7 +77,7 @@ Development requires JDK 25.
 The resulting mod will be placed in `build/libs`:
 
 ```text
-companio-1.0.1+26.1.2.jar
+companio-1.2+26.1.2.jar
 ```
 
 ## Notes

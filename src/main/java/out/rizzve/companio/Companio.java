@@ -10,6 +10,6 @@ public class Companio implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("Companio initialized");
+        LOGGER.info("Companio! V1.2 initialized");
     }
 }
