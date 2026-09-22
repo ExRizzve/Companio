@@ -72,17 +72,8 @@ It controls flight height, wandering radius, return distance, speed, and acceler
 
 Development requires JDK 25. Versions `1.21.8` to `1.21.11` are compiled for Java 21, but JDK 25 builds all of them.
 
-The target version is selected with `-Pmc` and defaults to `26.2`. Per-version settings live in `versions/<version>.properties`.
-
 ```bash
 ./gradlew build
-./gradlew build -Pmc=1.21.10
-```
-
-Build every version and collect the JARs in `dist`:
-
-```powershell
-./build-all.ps1
 ```
 
 The resulting mod will be placed in `build/libs`:
