@@ -1,0 +1,26 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        gradlePluginPortal()
+    }
+}
+
+def targetVersion = providers.gradleProperty('mc').orElse('26.2').get()
+def versionFile = file("versions/${targetVersion}.properties")
+if (!versionFile.exists()) {
+    throw new GradleException("Unknown Minecraft version '${targetVersion}'. Available: " +
+            file('versions').listFiles().findAll { it.name.endsWith('.properties') }
+                    .collect { it.name - '.properties' }.sort().join(', '))
+}
+
+def versionProps = new Properties()
+versionFile.withInputStream { versionProps.load(it) }
+
+rootProject.buildFileName = versionProps.getProperty('remap') == 'true' ? 'build-remap.gradle' : 'build.gradle'
+
+gradle.beforeProject { project ->
+    versionProps.each { key, value -> project.ext.set(key, value) }
+}

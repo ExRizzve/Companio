@@ -1,0 +1,51 @@
+# Gradle
+.gradle/
+build/
+/out/
+
+# Minecraft development runtime
+run/
+logs/
+crash-reports/
+/config/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Other IDEs
+.vscode/
+.classpath
+.project
+.settings/
+bin/
+*.code-workspace
+
+# Claude Code local files
+.claude/
+
+# Logs, backups and temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Local secrets
+.env
+
+# Operating systems
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+# Release jars collected by build-all.ps1
+dist/
+
+# Scripts
+build-all.ps1

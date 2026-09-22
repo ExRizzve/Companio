@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "companio",
+  "version": "${version}",
+  "name": "Companio",
+  "description": "A small flying companion using any Minecraft player's skin.",
+  "authors": ["rizzve"],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "out.rizzve.companio.client.CompanioClient"
+    ]
+  },
+  "mixins": [
+    "companio.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
