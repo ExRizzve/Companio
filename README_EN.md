@@ -94,15 +94,8 @@ The NeoForge build lives in its own `neoforge` module:
 ./gradlew -p neoforge build -Pmc=26.2
 ```
 
-Build everything and collect the JARs in `dist`:
-
-```powershell
-./build-all.ps1
-./build-neoforge.ps1
-```
-
 > [!NOTE]
-> The first NeoForge build takes 20–40 minutes per Minecraft version, because its toolchain decompiles and recompiles the client. After that the result is cached and builds take seconds. For `1.21.x` targets Gradle downloads JDK 21 automatically if needed.
+> The first NeoForge build takes 20-40 minutes per Minecraft version, because its toolchain decompiles and recompiles the client. After that the result is cached and builds take seconds. For `1.21.x` targets Gradle downloads JDK 21 automatically if needed.
 
 ## Project layout
 
