@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[3,]"
+license="All-Rights-Reserved"
+
+[[accessTransformers]]
+    file="META-INF/accesstransformer.cfg"
+
+[[mods]]
+modId="companio"
+version="${version}"
+displayName="Companio"
+description="A small flying companion using any Minecraft player's skin."
+authors="rizzve"
+logoFile="icon.png"
+
+[[dependencies.companio]]
+    modId="neoforge"
+    type="required"
+    versionRange="[${neoforge_range},)"
+    ordering="NONE"
+
+[[dependencies.companio]]
+    modId="minecraft"
+    type="required"
+    versionRange="[${minecraft_version},)"
+    ordering="NONE"

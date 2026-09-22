@@ -1,0 +1,40 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        maven {
+            name = 'NeoForged'
+            url = 'https://maven.neoforged.net/releases'
+        }
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+rootProject.name = 'companio-neoforge'
+
+def targetVersion = providers.gradleProperty('mc').orElse('26.3').get()
+def versionFile = file("../versions/${targetVersion}.properties")
+if (!versionFile.exists()) {
+    throw new GradleException("Unknown Minecraft version '${targetVersion}'. Available: " +
+            file('../versions').listFiles().findAll { it.name.endsWith('.properties') }
+                    .collect { it.name - '.properties' }.sort().join(', '))
+}
+
+def versionProps = new Properties()
+versionFile.withInputStream { versionProps.load(it) }
+
+if (!versionProps.getProperty('neoforge_version')) {
+    throw new GradleException("Minecraft ${targetVersion} has no 'neoforge_version' set in " +
+            "versions/${targetVersion}.properties — NeoForge is not available for this version yet.")
+}
+
+def modProps = new Properties()
+file('../gradle.properties').withInputStream { modProps.load(it) }
+
+gradle.beforeProject { project ->
+    modProps.each { key, value -> project.ext.set(key, value) }
+    versionProps.each { key, value -> project.ext.set(key, value) }
+}

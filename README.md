@@ -9,6 +9,7 @@
 [![Version](https://img.shields.io/badge/Version-1.3-7C5CFC?style=flat-square)](#что-изменилось-в-13)
 [![Minecraft](https://img.shields.io/badge/Minecraft-26.3_·_26.2_·_26.1.2_·_26.1.1_·_26.1_·_1.21.11_·_1.21.10_·_1.21.9_·_1.21.8-62B47A?style=flat-square)](#установка)
 [![Fabric](https://img.shields.io/badge/Loader-Fabric-DBD0B4?style=flat-square)](https://fabricmc.net/)
+[![NeoForge](https://img.shields.io/badge/Loader-NeoForge-F16436?style=flat-square)](https://neoforged.net/)
 [![Environment](https://img.shields.io/badge/Environment-Client-4C8BF5?style=flat-square)](#установка)
 [![License](https://img.shields.io/badge/License-All_Rights_Reserved-lightgrey?style=flat-square)](LICENSE.txt)
 
@@ -22,6 +23,7 @@ Companio добавляет до шести визуальных спутник�
 
 ## Что изменилось в 1.3
 
+- добавлена поддержка загрузчика NeoForge для всех девяти версий Minecraft;
 - мод доступен для Minecraft `26.3`, `26.2`, `26.1.2`, `26.1.1`, `26.1`, `1.21.11`, `1.21.10`, `1.21.9` и `1.21.8`;
 - компаньон телепортируется к владельцу, если застрял, не может до него долететь или слишком далеко;
 - при смене измерения компаньоны появляются рядом с владельцем в новом мире;
@@ -110,27 +112,57 @@ Companio добавляет до шести визуальных спутник�
 
 ## Установка
 
-Понадобятся:
+### Fabric
 
 - Minecraft Java Edition `26.3`, `26.2`, `26.1.2`, `26.1.1`, `26.1`, `1.21.11`, `1.21.10`, `1.21.9` или `1.21.8`;
 - Fabric Loader `0.19.3` или новее;
 - Fabric API для вашей версии Minecraft.
 
-Для каждой версии Minecraft есть отдельный JAR, например `companio-1.3+1.21.10.jar`. Скачайте JAR под свою версию из раздела [Releases](../../releases) и положите его в папку `.minecraft/mods`. Устанавливать Companio на сервер не требуется.
+Файл вида `companio-1.3+1.21.10.jar`.
+
+### NeoForge
+
+- те же версии Minecraft, что и у Fabric;
+- NeoForge для вашей версии Minecraft.
+
+Файл вида `companio-1.3+26.2-neoforge.jar`. Fabric API не нужен.
+
+Скачайте JAR под свою версию и загрузчик из раздела [Releases](../../releases) и положите его в папку `.minecraft/mods`. Устанавливать Companio на сервер не требуется.
 
 ## Сборка из исходников
 
 Для разработки требуется JDK 25. Версии `1.21.8` – `1.21.11` собираются под Java 21, но JDK 25 подходит для всех.
 
+Целевая версия выбирается параметром `-Pmc`, по умолчанию `26.2`. Настройки версий лежат в `versions/<версия>.properties`.
+
 ```bash
-./gradlew build
+./gradlew build -Pmc=1.21.10
 ```
 
-Готовый мод появится в `build/libs`:
+Сборка под NeoForge лежит в отдельном модуле `neoforge`:
 
-```text
-companio-1.3+26.2.jar
+```bash
+./gradlew -p neoforge build -Pmc=26.2
 ```
+
+Собрать всё сразу и сложить JAR в папку `dist`:
+
+```powershell
+./build-all.ps1
+./build-neoforge.ps1
+```
+
+> [!NOTE]
+> Первая сборка под NeoForge занимает 20–40 минут на каждую версию Minecraft: его инструменты декомпилируют и заново собирают клиент. Дальше результат кешируется, и сборка идёт за секунды. Для версий `1.21.x` Gradle при необходимости сам скачает JDK 21.
+
+## Структура проекта
+
+| Папка | Содержимое |
+|---|---|
+| `common` | Общий код: полёт, отображение, конфигурация, загрузка скинов |
+| `src` | Fabric: точка входа, команды, чтение конфигурации |
+| `neoforge` | NeoForge: точка входа, команды, чтение конфигурации |
+| `versions` | Версии Minecraft, Fabric API и NeoForge для каждой сборки |
 
 ## Важно
 

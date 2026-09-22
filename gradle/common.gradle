@@ -53,8 +53,12 @@ java {
     withSourcesJar()
 }
 
+sourceSets.main.java.srcDir("common/src/main/java")
+sourceSets.main.resources.srcDir("common/src/main/resources")
 project.compat.split(',').each { name ->
-    sourceSets.main.java.srcDir("src/compat/${name.trim()}/java")
+    def compatName = name.trim()
+    sourceSets.main.java.srcDir("src/compat/${compatName}/java")
+    sourceSets.main.java.srcDir("common/src/compat/${compatName}/java")
 }
 
 jar {
