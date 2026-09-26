@@ -2,6 +2,8 @@ package out.rizzve.companio.client.config;
 
 import out.rizzve.companio.client.companion.CompanionHat;
 
+import java.util.regex.Pattern;
+
 public record CompanionSlot(
         String playerName,
         CompanionHat hat,
@@ -14,9 +16,11 @@ public record CompanionSlot(
 
     public static final int MAX_NAME_LENGTH = 32;
 
+    private static final Pattern PLAYER_NAME = Pattern.compile("[A-Za-z0-9_]{0,16}");
+
     public CompanionSlot validated() {
         return new CompanionSlot(
-                playerName != null && playerName.matches("[A-Za-z0-9_]{0,16}") ? playerName : "",
+                playerName != null && PLAYER_NAME.matcher(playerName).matches() ? playerName : "",
                 hat == null ? CompanionHat.NONE : hat,
                 name == null ? "" : name.substring(0, Math.min(name.length(), MAX_NAME_LENGTH)),
                 profileId == null ? "" : profileId,

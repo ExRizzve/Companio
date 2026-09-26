@@ -13,6 +13,7 @@ public final class CompanionFlight {
     private static final double COLLISION_SIZE = 0.72;
     private static final double COLLISION_STEP = 0.12;
     private static final double PERSONAL_SPACE = 1.15;
+    private static final double PERSONAL_SPACE_SQUARED = PERSONAL_SPACE * PERSONAL_SPACE;
     private static final double SEPARATION_STRENGTH = 0.045;
     private static final int TARGET_ATTEMPTS = 12;
     private static final double MINIMUM_TURN_SPEED_SQUARED = 0.0004;
@@ -76,7 +77,7 @@ public final class CompanionFlight {
         double distance = difference.length();
         Vec3 desiredVelocity = distance < 0.05
                 ? Vec3.ZERO
-                : difference.scale(1.0 / distance).scale(Math.min(speed, distance * 0.22));
+                : difference.scale(Math.min(speed, distance * 0.22) / distance);
         desiredVelocity = desiredVelocity.add(separation(position, companionPositions));
 
         velocity = approach(velocity, desiredVelocity, acceleration).scale(0.97);
@@ -154,6 +155,12 @@ public final class CompanionFlight {
     }
 
     private Vec3 moveWithoutClipping(Vec3 position, LocalPlayer owner) {
+        // The swept box covers every intermediate step, so one query replaces the per-step checks in open air.
+        if (owner.level().noCollision(collisionBox(position).expandTowards(velocity))) {
+            blockedThisTick = false;
+            return position.add(velocity);
+        }
+
         int count = Math.max(1, (int) Math.ceil(velocity.length() / COLLISION_STEP));
         Vec3 step = velocity.scale(1.0 / count);
         Vec3 current = position;
@@ -200,31 +207,38 @@ public final class CompanionFlight {
     }
 
     private static Vec3 separation(Vec3 position, List<Vec3> companionPositions) {
-        Vec3 force = Vec3.ZERO;
+        double forceX = 0.0;
+        double forceY = 0.0;
+        double forceZ = 0.0;
         for (Vec3 other : companionPositions) {
-            Vec3 difference = position.subtract(other);
-            double distance = difference.length();
-            if (distance >= PERSONAL_SPACE) {
+            double dx = position.x - other.x;
+            double dy = position.y - other.y;
+            double dz = position.z - other.z;
+            double distanceSquared = dx * dx + dy * dy + dz * dz;
+            if (distanceSquared >= PERSONAL_SPACE_SQUARED) {
                 continue;
             }
-            if (distance < 1.0E-4) {
+            if (distanceSquared < 1.0E-8) {
                 double angle = ThreadLocalRandom.current().nextDouble(Math.PI * 2.0);
-                force = force.add(Math.cos(angle) * SEPARATION_STRENGTH, 0.0, Math.sin(angle) * SEPARATION_STRENGTH);
+                forceX += Math.cos(angle) * SEPARATION_STRENGTH;
+                forceZ += Math.sin(angle) * SEPARATION_STRENGTH;
                 continue;
             }
-            double strength = (PERSONAL_SPACE - distance) / PERSONAL_SPACE * SEPARATION_STRENGTH;
-            force = force.add(difference.scale(strength / distance));
+            double distance = Math.sqrt(distanceSquared);
+            double scale = (PERSONAL_SPACE - distance) / PERSONAL_SPACE * SEPARATION_STRENGTH / distance;
+            forceX += dx * scale;
+            forceY += dy * scale;
+            forceZ += dz * scale;
         }
-        return force;
+        return forceX == 0.0 && forceY == 0.0 && forceZ == 0.0 ? Vec3.ZERO : new Vec3(forceX, forceY, forceZ);
     }
 
     private static boolean isFree(LocalPlayer owner, Vec3 position) {
-        return owner.level().noCollision(AABB.ofSize(
-                position,
-                COLLISION_SIZE,
-                COLLISION_SIZE,
-                COLLISION_SIZE
-        ));
+        return owner.level().noCollision(collisionBox(position));
+    }
+
+    private static AABB collisionBox(Vec3 position) {
+        return AABB.ofSize(position, COLLISION_SIZE, COLLISION_SIZE, COLLISION_SIZE);
     }
 
     private static Vec3 approach(Vec3 current, Vec3 target, double maximumChange) {

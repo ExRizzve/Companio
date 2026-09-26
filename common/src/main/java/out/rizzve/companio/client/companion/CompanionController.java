@@ -15,12 +15,12 @@ import java.util.UUID;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public final class CompanionController {
     public static final int MAX_COMPANIONS = 16;
 
     private final List<CompanionInstance> companions = new ArrayList<>();
+    private final List<Vec3> neighbourPositions = new ArrayList<>(MAX_COMPANIONS - 1);
     private CompanioConfig config;
 
     public CompanionController(CompanioConfig config) {
@@ -164,13 +164,21 @@ public final class CompanionController {
     }
 
     public void tick(Minecraft client) {
+        if (companions.isEmpty()) {
+            return;
+        }
         for (CompanionInstance companion : companions) {
-            List<Vec3> positions = companions.stream()
-                    .filter(other -> other != companion)
-                    .map(CompanionInstance::position)
-                    .filter(Objects::nonNull)
-                    .toList();
-            companion.tick(client, config, positions);
+            neighbourPositions.clear();
+            for (CompanionInstance other : companions) {
+                if (other == companion) {
+                    continue;
+                }
+                Vec3 position = other.position();
+                if (position != null) {
+                    neighbourPositions.add(position);
+                }
+            }
+            companion.tick(client, config, neighbourPositions);
         }
     }
 
