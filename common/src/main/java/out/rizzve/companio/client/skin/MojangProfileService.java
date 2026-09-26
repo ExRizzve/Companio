@@ -16,11 +16,13 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 
 public final class MojangProfileService {
     private static final URI PROFILE_API = URI.create("https://api.mojang.com/users/profiles/minecraft/");
     private static final URI SESSION_API = URI.create("https://sessionserver.mojang.com/session/minecraft/profile/");
     private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(8);
+    private static final Pattern PLAYER_NAME = Pattern.compile("[A-Za-z0-9_]{1,16}");
 
     private final HttpClient client = HttpClient.newBuilder()
             .connectTimeout(REQUEST_TIMEOUT)
@@ -28,7 +30,7 @@ public final class MojangProfileService {
             .build();
 
     public CompletableFuture<GameProfile> find(String playerName) {
-        if (playerName == null || !playerName.matches("[A-Za-z0-9_]{1,16}")) {
+        if (playerName == null || !PLAYER_NAME.matcher(playerName).matches()) {
             return CompletableFuture.failedFuture(new ProfileException("companio.error.invalid_name"));
         }
 
@@ -95,10 +97,10 @@ public final class MojangProfileService {
         if (value.length() != 32) {
             throw new IllegalArgumentException("Invalid UUID");
         }
-        return UUID.fromString(value.replaceFirst(
-                "([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{12})",
-                "$1-$2-$3-$4-$5"
-        ));
+        return new UUID(
+                Long.parseUnsignedLong(value, 0, 16, 16),
+                Long.parseUnsignedLong(value, 16, 32, 16)
+        );
     }
 
     public static final class ProfileException extends RuntimeException {
