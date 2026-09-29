@@ -3,6 +3,7 @@ package out.rizzve.companio.client.config;
 import out.rizzve.companio.client.companion.CompanionController;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public record CompanioConfig(
         String lastPlayerName,
@@ -16,6 +17,8 @@ public record CompanioConfig(
         HatPlacement hat,
         List<CompanionSlot> companions
 ) {
+    private static final Pattern PLAYER_NAME = Pattern.compile("[A-Za-z0-9_]{1,16}");
+
     public static final CompanioConfig DEFAULT = new CompanioConfig("", 2.6, 3.5, 15.0, 0.09, 0.012, 0.42, 11.0F, HatPlacement.DEFAULT, List.of());
 
     public CompanioConfig validated() {
@@ -126,7 +129,7 @@ public record CompanioConfig(
     }
 
     private static boolean validName(String value) {
-        return value != null && (value.isEmpty() || value.matches("[A-Za-z0-9_]{1,16}"));
+        return value != null && (value.isEmpty() || PLAYER_NAME.matcher(value).matches());
     }
 
     private static double clampFinite(double value, double min, double max, double fallback) {
