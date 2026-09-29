@@ -1,0 +1,21 @@
+{
+  "textures": {
+    "hat": "companio:item/hats/red_and_green",
+    "particle": "companio:item/hats/red_and_green"
+  },
+  "elements": [
+    {
+      "name": "wreath",
+      "from": [2, 3.8, 2],
+      "to": [14, 6.3, 14],
+      "faces": {
+        "up": { "uv": [0, 0, 6, 6], "texture": "#hat" },
+        "down": { "uv": [6, 0, 12, 6], "texture": "#hat" },
+        "north": { "uv": [0, 6, 6, 7.5], "texture": "#hat" },
+        "south": { "uv": [0, 7.5, 6, 9], "texture": "#hat" },
+        "east": { "uv": [0, 6, 6, 7.5], "texture": "#hat" },
+        "west": { "uv": [0, 7.5, 6, 9], "texture": "#hat" }
+      }
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.commands.SharedSuggestionProvider;
 import out.rizzve.companio.client.companion.CompanionController;
+import out.rizzve.companio.client.companion.CompanionHat;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
@@ -36,6 +37,10 @@ public final class CompanioCompleter {
 
     public static CompletableFuture<Suggestions> levels(SuggestionsBuilder builder) {
         return SharedSuggestionProvider.suggest(LEVELS, builder);
+    }
+
+    public static CompletableFuture<Suggestions> hats(SuggestionsBuilder builder) {
+        return SharedSuggestionProvider.suggest(CompanionHat.ids(), builder);
     }
 
     public static CompletableFuture<Suggestions> companions(

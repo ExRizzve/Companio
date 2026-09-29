@@ -1,5 +1,9 @@
 package out.rizzve.companio.client.config;
 
+import out.rizzve.companio.client.companion.CompanionController;
+
+import java.util.List;
+
 public record CompanioConfig(
         String lastPlayerName,
         double hoverHeight,
@@ -8,9 +12,11 @@ public record CompanioConfig(
         double maxSpeed,
         double acceleration,
         double followSpeed,
-        float turnSpeed
+        float turnSpeed,
+        HatPlacement hat,
+        List<CompanionSlot> companions
 ) {
-    public static final CompanioConfig DEFAULT = new CompanioConfig("", 2.6, 3.5, 15.0, 0.09, 0.012, 0.42, 11.0F);
+    public static final CompanioConfig DEFAULT = new CompanioConfig("", 2.6, 3.5, 15.0, 0.09, 0.012, 0.42, 11.0F, HatPlacement.DEFAULT, List.of());
 
     public CompanioConfig validated() {
         return new CompanioConfig(
@@ -21,38 +27,85 @@ public record CompanioConfig(
                 clampFinite(maxSpeed, 0.04, 0.2, DEFAULT.maxSpeed),
                 clampFinite(acceleration, 0.004, 0.03, DEFAULT.acceleration),
                 clampFinite(followSpeed, 0.25, 0.8, DEFAULT.followSpeed),
-                (float) clampFinite(turnSpeed, 3.0, 24.0, DEFAULT.turnSpeed)
+                (float) clampFinite(turnSpeed, 3.0, 24.0, DEFAULT.turnSpeed),
+                hat == null ? HatPlacement.DEFAULT : hat.validated(),
+                validatedSlots(companions)
         );
     }
 
+    private static List<CompanionSlot> validatedSlots(List<CompanionSlot> slots) {
+        if (slots == null) {
+            return List.of();
+        }
+        return slots.stream()
+                .filter(java.util.Objects::nonNull)
+                .limit(CompanionController.MAX_COMPANIONS)
+                .map(CompanionSlot::validated)
+                .toList();
+    }
+
+    public CompanioConfig withCompanionAdded(CompanionSlot slot) {
+        List<CompanionSlot> updated = new java.util.ArrayList<>(companions);
+        updated.add(slot);
+        return withCompanions(updated);
+    }
+
+    public CompanioConfig withCompanionRemoved(int index) {
+        List<CompanionSlot> updated = new java.util.ArrayList<>(companions);
+        updated.remove(index);
+        return withCompanions(updated);
+    }
+
+    public CompanioConfig withCompanions(List<CompanionSlot> value) {
+        return copy(lastPlayerName, hoverHeight, wanderRadius, maxDistance, maxSpeed, acceleration, followSpeed, turnSpeed, hat, value);
+    }
+
+    public CompanioConfig withCompanion(int index, CompanionSlot slot) {
+        List<CompanionSlot> updated = new java.util.ArrayList<>(companions);
+        updated.set(index, slot);
+        return withCompanions(updated);
+    }
+
+    public CompanioConfig withHat(HatPlacement value) {
+        return copy(lastPlayerName, hoverHeight, wanderRadius, maxDistance, maxSpeed, acceleration, followSpeed, turnSpeed, value, companions);
+    }
+
     public CompanioConfig withLastPlayerName(String playerName) {
-        return copy(playerName, hoverHeight, wanderRadius, maxDistance, maxSpeed, acceleration, followSpeed, turnSpeed);
+        return copy(playerName, hoverHeight, wanderRadius, maxDistance, maxSpeed, acceleration, followSpeed, turnSpeed, hat, companions);
     }
 
     public CompanioConfig withHoverHeight(double value) {
-        return copy(lastPlayerName, value, wanderRadius, maxDistance, maxSpeed, acceleration, followSpeed, turnSpeed);
+        return copy(lastPlayerName, value, wanderRadius, maxDistance, maxSpeed, acceleration, followSpeed, turnSpeed, hat, companions);
     }
 
     public CompanioConfig withWanderRadius(double value) {
-        return copy(lastPlayerName, hoverHeight, value, maxDistance, maxSpeed, acceleration, followSpeed, turnSpeed);
+        return copy(lastPlayerName, hoverHeight, value, maxDistance, maxSpeed, acceleration, followSpeed, turnSpeed, hat, companions);
     }
 
     public CompanioConfig withMaxSpeed(double value) {
-        return copy(lastPlayerName, hoverHeight, wanderRadius, maxDistance, value, acceleration, followSpeed, turnSpeed);
+        return copy(lastPlayerName, hoverHeight, wanderRadius, maxDistance, value, acceleration, followSpeed, turnSpeed, hat, companions);
     }
 
     public CompanioConfig withSmoothness(int level) {
         double value = 0.032 - Math.clamp(level, 1, 10) * 0.0026;
-        return copy(lastPlayerName, hoverHeight, wanderRadius, maxDistance, maxSpeed, value, followSpeed, turnSpeed);
+        return copy(lastPlayerName, hoverHeight, wanderRadius, maxDistance, maxSpeed, value, followSpeed, turnSpeed, hat, companions);
+    }
+
+    public int smoothnessLevel() {
+        return (int) Math.clamp(Math.round((0.032 - acceleration) / 0.0026), 1, 10);
+    }
+
+    public int turnSharpnessLevel() {
+        return (int) Math.clamp(Math.round((turnSpeed - 2.0) / 2.2), 1, 10);
     }
 
     public CompanioConfig withFollowSpeed(double value) {
-        return copy(lastPlayerName, hoverHeight, wanderRadius, maxDistance, maxSpeed, acceleration, value, turnSpeed);
+        return copy(lastPlayerName, hoverHeight, wanderRadius, maxDistance, maxSpeed, acceleration, value, turnSpeed, hat, companions);
     }
 
     public CompanioConfig withTurnSharpness(int level) {
         float value = 2.0F + Math.clamp(level, 1, 10) * 2.2F;
-        return copy(lastPlayerName, hoverHeight, wanderRadius, maxDistance, maxSpeed, acceleration, followSpeed, value);
+        return copy(lastPlayerName, hoverHeight, wanderRadius, maxDistance, maxSpeed, acceleration, followSpeed, value, hat, companions);
     }
 
     private static CompanioConfig copy(
@@ -63,10 +116,12 @@ public record CompanioConfig(
             double maxSpeed,
             double acceleration,
             double followSpeed,
-            float turnSpeed
+            float turnSpeed,
+            HatPlacement hat,
+            List<CompanionSlot> companions
     ) {
         return new CompanioConfig(
-                lastPlayerName, hoverHeight, wanderRadius, maxDistance, maxSpeed, acceleration, followSpeed, turnSpeed
+                lastPlayerName, hoverHeight, wanderRadius, maxDistance, maxSpeed, acceleration, followSpeed, turnSpeed, hat, companions
         ).validated();
     }
 

@@ -11,6 +11,15 @@ base {
 }
 
 repositories {
+    maven {
+        name = 'Shedaniel'
+        url = 'https://maven.shedaniel.me/'
+        content { includeGroup 'me.shedaniel.cloth' }
+    }
+}
+
+dependencies {
+    implementation "me.shedaniel.cloth:cloth-config-neoforge:${project.cloth_version}"
 }
 
 def targetJavaVersion = project.java_version.toInteger()

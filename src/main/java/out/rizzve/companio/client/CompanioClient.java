@@ -3,9 +3,11 @@ package out.rizzve.companio.client;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import out.rizzve.companio.client.command.CompanioCommand;
+import out.rizzve.companio.client.companion.CompanionBootstrap;
+import out.rizzve.companio.client.companion.CompanionController;
 import out.rizzve.companio.client.config.CompanioConfig;
 import out.rizzve.companio.client.config.ConfigManager;
-import out.rizzve.companio.client.companion.CompanionController;
+import out.rizzve.companio.client.gui.PauseScreenButton;
 import out.rizzve.companio.client.skin.MojangProfileService;
 
 public class CompanioClient implements ClientModInitializer {
@@ -16,8 +18,10 @@ public class CompanioClient implements ClientModInitializer {
         CompanioConfig config = configManager.load();
         CompanionController controller = new CompanionController(config);
         MojangProfileService profileService = new MojangProfileService();
+        CompanionBootstrap bootstrap = new CompanionBootstrap(controller, configManager, profileService);
 
         CompanioCommand.register(controller, profileService, configManager);
-        ClientTickEvents.END_CLIENT_TICK.register(controller::tick);
+        PauseScreenButton.register(controller, configManager, profileService);
+        ClientTickEvents.END_CLIENT_TICK.register(bootstrap::tick);
     }
 }

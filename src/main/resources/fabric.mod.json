@@ -18,8 +18,9 @@
     "companio.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=${loader_version}",
+    "fabricloader": ">=${loader_min}",
     "fabric-api": "*",
+    "cloth-config": "*",
     "minecraft": "${minecraft_version}"
   }
 }

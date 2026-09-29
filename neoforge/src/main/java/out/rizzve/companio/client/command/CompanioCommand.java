@@ -10,14 +10,12 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import out.rizzve.companio.Companio;
+import out.rizzve.companio.client.companion.CompanionActions;
 import out.rizzve.companio.client.companion.CompanionController;
-import out.rizzve.companio.client.config.CompanioConfig;
+import out.rizzve.companio.client.companion.CompanionHat;
 import out.rizzve.companio.client.config.ConfigManager;
 import out.rizzve.companio.client.skin.MojangProfileService;
 import out.rizzve.companio.client.skin.ProfileCompat;
-
-import java.util.concurrent.CompletionException;
 
 public final class CompanioCommand {
     private CompanioCommand() {
@@ -28,167 +26,102 @@ public final class CompanioCommand {
             MojangProfileService profileService,
             ConfigManager configManager
     ) {
+        CompanionActions actions = new CompanionActions(controller, configManager, profileService);
+
         NeoForge.EVENT_BUS.addListener((RegisterClientCommandsEvent event) -> event.getDispatcher().register(
                 Commands.literal("companio")
                         .then(CompanioConfigCommand.build(controller, configManager))
                         .then(Commands.literal("remove")
-                                .then(Commands.literal("all").executes(command -> {
-                                    controller.remove();
-                                    sendSuccess(command.getSource(), Component.translatable("companio.command.removed"));
-                                    return 1;
-                                }))
-                                .then(Commands.argument("number", IntegerArgumentType.integer(1, CompanionController.MAX_COMPANIONS))
+                                .then(Commands.literal("all").executes(command ->
+                                        report(command.getSource(), actions.removeAll(Minecraft.getInstance()))))
+                                .then(Commands.argument("number", IntegerArgumentType.integer(1))
                                         .suggests((command, builder) -> CompanioCompleter.companions(controller, builder))
-                                        .executes(command -> remove(
-                                                command.getSource(),
-                                                controller,
-                                                IntegerArgumentType.getInteger(command, "number")
-                                        ))))
-                        .then(Commands.literal("reload").executes(command -> {
-                            controller.updateConfig(configManager.load());
-                            sendSuccess(command.getSource(), Component.translatable("companio.command.reloaded"));
-                            return 1;
-                        }))
+                                        .executes(command -> report(command.getSource(), actions.remove(
+                                                IntegerArgumentType.getInteger(command, "number"),
+                                                Minecraft.getInstance())))))
+                        .then(Commands.literal("hat")
+                                .then(Commands.argument("number", IntegerArgumentType.integer(1))
+                                        .suggests((command, builder) -> CompanioCompleter.companions(controller, builder))
+                                        .then(Commands.argument("hat", StringArgumentType.word())
+                                                .suggests((command, builder) -> CompanioCompleter.hats(builder))
+                                                .executes(command -> setHat(
+                                                        command.getSource(),
+                                                        actions,
+                                                        IntegerArgumentType.getInteger(command, "number"),
+                                                        StringArgumentType.getString(command, "hat"))))))
+                        .then(Commands.literal("reload").executes(command ->
+                                report(command.getSource(), actions.reload(Minecraft.getInstance()))))
                         .then(Commands.literal("name")
-                                .then(Commands.argument("number", IntegerArgumentType.integer(1, CompanionController.MAX_COMPANIONS))
+                                .then(Commands.argument("number", IntegerArgumentType.integer(1))
                                         .suggests((command, builder) -> CompanioCompleter.companions(controller, builder))
-                                        .then(Commands.literal("clear").executes(command -> setName(
-                                                command.getSource(),
-                                                controller,
+                                        .then(Commands.literal("clear").executes(command -> report(command.getSource(), actions.setName(
                                                 IntegerArgumentType.getInteger(command, "number"),
-                                                ""
-                                        )))
-                                        .then(Commands.argument("name", StringArgumentType.greedyString()).executes(command -> setName(
-                                                command.getSource(),
-                                                controller,
-                                                IntegerArgumentType.getInteger(command, "number"),
-                                                StringArgumentType.getString(command, "name")
-                                        )))))
+                                                "",
+                                                Minecraft.getInstance()))))
+                                        .then(Commands.argument("name", StringArgumentType.greedyString()).executes(command ->
+                                                report(command.getSource(), actions.setName(
+                                                        IntegerArgumentType.getInteger(command, "number"),
+                                                        StringArgumentType.getString(command, "name"),
+                                                        Minecraft.getInstance()))))))
                         .then(Commands.literal("create")
-                                .executes(command -> {
-                                    if (!controller.summonDefault(Minecraft.getInstance())) {
-                                        sendError(command.getSource(), Component.translatable("companio.error.limit_reached"));
-                                        return 0;
-                                    }
-                                    sendSuccess(command.getSource(), Component.translatable("companio.command.summoned_default"));
-                                    sendNumber(command.getSource(), controller);
-                                    return 1;
-                                })
+                                .executes(command -> create(command.getSource(), actions, ""))
                                 .then(Commands.argument("player", StringArgumentType.word())
                                         .suggests((command, builder) -> SharedSuggestionProvider.suggest(
                                                 Minecraft.getInstance().getConnection().getOnlinePlayers().stream()
                                                         .map(player -> ProfileCompat.name(player.getProfile())),
                                                 builder
                                         ))
-                                        .executes(command -> createWithPlayer(
-                                                StringArgumentType.getString(command, "player"),
+                                        .executes(command -> create(
                                                 command.getSource(),
-                                                controller,
-                                                profileService,
-                                                configManager
-                                        ))))
+                                                actions,
+                                                StringArgumentType.getString(command, "player")))))
         ));
     }
 
-    private static int createWithPlayer(
-            String playerName,
-            CommandSourceStack source,
-            CompanionController controller,
-            MojangProfileService profileService,
-            ConfigManager configManager
-    ) {
-        if (controller.isFull()) {
-            sendError(source, Component.translatable("companio.error.limit_reached"));
-            return 0;
+    private static int create(CommandSourceStack source, CompanionActions actions, String playerName) {
+        CompanionActions.Result result = actions.create(playerName, Minecraft.getInstance());
+        report(source, result);
+        if (result.success()) {
+            sendSuccess(source, Component.translatable("companio.command.number", actions.count()));
         }
-        sendFeedback(source, format(ChatFormatting.YELLOW, Component.translatable("companio.command.loading", playerName)));
-
-        profileService.find(playerName).whenComplete((profile, error) -> Minecraft.getInstance().execute(() -> {
-            if (error != null) {
-                Throwable cause = unwrap(error);
-                Companio.LOGGER.error("Could not load profile for {}", playerName, cause);
-                Component message = cause instanceof MojangProfileService.ProfileException profileError
-                        ? profileError.toComponent()
-                        : Component.translatable("companio.error.skin_load");
-                source.sendFailure(format(ChatFormatting.RED, message));
-                return;
-            }
-
-            CompanioConfig config = configManager.load().withLastPlayerName(ProfileCompat.name(profile));
-            configManager.save(config);
-            controller.updateConfig(config);
-            if (!controller.summon(profile, Minecraft.getInstance())) {
-                sendError(source, Component.translatable("companio.error.limit_reached"));
-                return;
-            }
-            sendSuccess(source, Component.translatable("companio.command.summoned", ProfileCompat.name(profile)));
-            sendNumber(source, controller);
-        }));
-        return 1;
+        return result.success() ? 1 : 0;
     }
 
-    private static int setName(
+    private static int setHat(
             CommandSourceStack source,
-            CompanionController controller,
+            CompanionActions actions,
             int number,
-            String name
+            String hatId
     ) {
-        if (name.length() > 32) {
-            sendError(source, Component.translatable("companio.error.name_too_long"));
+        CompanionHat hat = CompanionHat.byId(hatId).orElse(null);
+        if (hat == null) {
+            sendError(source, Component.translatable("companio.error.unknown_hat", hatId));
             return 0;
         }
-        if (!controller.setName(number, name)) {
-            sendError(source, Component.translatable("companio.error.invalid_companion_number", number));
-            return 0;
-        }
-
-        Component message = name.isBlank()
-                ? Component.translatable("companio.command.name_cleared", number)
-                : Component.translatable("companio.command.name_set", number, name);
-        sendSuccess(source, message);
-        return 1;
+        return report(source, actions.setHat(number, hat, Minecraft.getInstance()));
     }
 
-    private static int remove(
-            CommandSourceStack source,
-            CompanionController controller,
-            int number
-    ) {
-        if (!controller.remove(number)) {
-            sendError(source, Component.translatable("companio.error.invalid_companion_number", number));
-            return 0;
+    private static int report(CommandSourceStack source, CompanionActions.Result result) {
+        if (result.success()) {
+            sendSuccess(source, result.message());
+            return 1;
         }
-        sendSuccess(source, Component.translatable("companio.command.removed_number", number));
-        return 1;
-    }
-
-    private static void sendNumber(CommandSourceStack source, CompanionController controller) {
-        sendSuccess(source, Component.translatable("companio.command.number", controller.size()));
+        sendError(source, result.message());
+        return 0;
     }
 
     private static void sendSuccess(CommandSourceStack source, Component message) {
-        sendFeedback(source, format(ChatFormatting.GREEN, message));
+        Component formatted = format(ChatFormatting.GREEN, message);
+        source.sendSuccess(() -> formatted, false);
     }
 
     private static void sendError(CommandSourceStack source, Component message) {
         source.sendFailure(format(ChatFormatting.RED, message));
     }
 
-    private static void sendFeedback(CommandSourceStack source, Component message) {
-        source.sendSuccess(() -> message, false);
-    }
-
     private static Component format(ChatFormatting color, Component message) {
         return Component.literal("[C] - ")
                 .withStyle(ChatFormatting.DARK_GREEN)
                 .append(message.copy().withStyle(color));
-    }
-
-    private static Throwable unwrap(Throwable throwable) {
-        Throwable current = throwable;
-        while (current instanceof CompletionException && current.getCause() != null) {
-            current = current.getCause();
-        }
-        return current;
     }
 }

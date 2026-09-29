@@ -28,4 +28,24 @@ public final class ProfileCompat {
     public static ResolvableProfile resolvable(GameProfile profile) {
         return new ResolvableProfile(profile);
     }
+
+    public static final String TEXTURES = "textures";
+
+    public static GameProfile fromTextures(UUID id, String name, String textures, String signature) {
+        com.google.common.collect.ImmutableMultimap.Builder<String, Property> properties =
+                com.google.common.collect.ImmutableMultimap.builder();
+        properties.put(TEXTURES, signature == null || signature.isEmpty()
+                ? new Property(TEXTURES, textures)
+                : new Property(TEXTURES, textures, signature));
+        return create(id, name, properties.build());
+    }
+    public static String textures(GameProfile profile) {
+        return profile.getProperties().get(TEXTURES).stream()
+                .map(Property::value).findFirst().orElse("");
+    }
+
+    public static String texturesSignature(GameProfile profile) {
+        return profile.getProperties().get(TEXTURES).stream()
+                .map(Property::signature).filter(java.util.Objects::nonNull).findFirst().orElse("");
+    }
 }

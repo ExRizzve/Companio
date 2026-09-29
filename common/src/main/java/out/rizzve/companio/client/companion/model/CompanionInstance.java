@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import out.rizzve.companio.client.companion.CompanionHat;
 import out.rizzve.companio.client.companion.display.CompanionDisplay;
 import out.rizzve.companio.client.companion.movement.CompanionFlight;
 import out.rizzve.companio.client.companion.movement.FlightState;
@@ -13,10 +14,12 @@ import out.rizzve.companio.client.config.CompanioConfig;
 import java.util.List;
 
 public final class CompanionInstance {
-    private final GameProfile profile;
+    private GameProfile profile;
+    private String playerName = "";
     private final CompanionDisplay display = new CompanionDisplay();
     private final CompanionFlight flight = new CompanionFlight();
     private ResourceKey<Level> dimension;
+    private CompanionHat hat = CompanionHat.NONE;
 
     public CompanionInstance(GameProfile profile) {
         this.profile = profile;
@@ -30,6 +33,7 @@ public final class CompanionInstance {
         if (!display.isAvailableIn(client.level) || dimension != client.level.dimension()) {
             spawn(client, config);
         }
+        display.setHatPlacement(config.hat());
         FlightState state = flight.tick(display.position(), client.player, config, positions);
         if (state.teleported()) {
             display.spawn(client.level, state.position(), state.yaw(), profile);
@@ -44,6 +48,25 @@ public final class CompanionInstance {
 
     public void setName(String name) {
         display.setName(name);
+    }
+
+    public void setHat(CompanionHat hat) {
+        this.hat = hat;
+        display.setHat(hat);
+    }
+
+    public CompanionHat hat() {
+        return hat;
+    }
+
+    public String playerName() {
+        return playerName;
+    }
+
+    public void setProfile(String playerName, GameProfile profile) {
+        this.playerName = playerName == null ? "" : playerName;
+        this.profile = profile;
+        display.discard();
     }
 
     public void discard() {

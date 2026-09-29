@@ -1,0 +1,34 @@
+{
+  "textures": {
+    "hat": "companio:item/hats/pugalo_hat",
+    "particle": "companio:item/hats/pugalo_hat"
+  },
+  "elements": [
+    {
+      "name": "brim",
+      "from": [1, 11.5, 1],
+      "to": [15, 12.5, 15],
+      "faces": {
+        "up": { "uv": [0, 9, 7, 16], "texture": "#hat" },
+        "down": { "uv": [0, 9, 7, 16], "texture": "#hat" },
+        "north": { "uv": [0, 6, 8, 6.5], "texture": "#hat" },
+        "south": { "uv": [0, 6.5, 8, 7], "texture": "#hat" },
+        "east": { "uv": [0, 7, 8, 7.5], "texture": "#hat" },
+        "west": { "uv": [0, 7.5, 8, 8], "texture": "#hat" }
+      }
+    },
+    {
+      "name": "crown",
+      "from": [4, 12.5, 4],
+      "to": [12, 17.5, 12],
+      "faces": {
+        "up": { "uv": [0, 2, 4, 6], "texture": "#hat" },
+        "down": { "uv": [0, 2, 4, 6], "texture": "#hat" },
+        "north": { "uv": [0, 2, 4, 5], "texture": "#hat" },
+        "east": { "uv": [0, 2, 4, 5], "texture": "#hat" },
+        "south": { "uv": [0, 3, 4, 6], "texture": "#hat" },
+        "west": { "uv": [0, 3, 4, 6], "texture": "#hat" }
+      }
+    }
+  ]
+}

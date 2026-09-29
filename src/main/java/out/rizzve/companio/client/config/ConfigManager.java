@@ -2,6 +2,7 @@ package out.rizzve.companio.client.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
 import net.fabricmc.loader.api.FabricLoader;
 import out.rizzve.companio.Companio;
 
@@ -22,7 +23,7 @@ public final class ConfigManager {
         }
 
         try (Reader reader = Files.newBufferedReader(path)) {
-            CompanioConfig loaded = GSON.fromJson(reader, CompanioConfig.class);
+            CompanioConfig loaded = GSON.fromJson(ConfigMigration.apply(JsonParser.parseReader(reader)), CompanioConfig.class);
             if (loaded == null) {
                 throw new IOException("configuration is empty");
             }

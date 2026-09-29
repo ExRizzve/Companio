@@ -20,6 +20,12 @@ logoFile="icon.png"
     ordering="NONE"
 
 [[dependencies.companio]]
+    modId="cloth_config"
+    type="required"
+    versionRange="[0,)"
+    ordering="NONE"
+
+[[dependencies.companio]]
     modId="minecraft"
     type="required"
     versionRange="[${minecraft_version},)"

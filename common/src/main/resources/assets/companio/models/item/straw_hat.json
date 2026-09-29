@@ -1,0 +1,34 @@
+{
+  "textures": {
+    "hat": "companio:item/hats/straw_hat",
+    "particle": "companio:item/hats/straw_hat"
+  },
+  "elements": [
+    {
+      "name": "brim",
+      "from": [-1, 12, -1],
+      "to": [17, 13, 17],
+      "faces": {
+        "up": { "uv": [0, 0, 8, 8], "texture": "#hat" },
+        "down": { "uv": [0, 8, 8, 16], "texture": "#hat" },
+        "north": { "uv": [8, 1, 12, 1.5], "texture": "#hat" },
+        "south": { "uv": [8, 1, 12, 1.5], "texture": "#hat" },
+        "east": { "uv": [8, 1, 12, 1.5], "texture": "#hat" },
+        "west": { "uv": [8, 1, 12, 1.5], "texture": "#hat" }
+      }
+    },
+    {
+      "name": "crown",
+      "from": [4.5, 13, 4.5],
+      "to": [11.5, 16, 11.5],
+      "faces": {
+        "up": { "uv": [8, 8, 12, 12], "texture": "#hat" },
+        "down": { "uv": [8, 8, 12, 12], "texture": "#hat" },
+        "north": { "uv": [8, 0, 12, 2], "texture": "#hat" },
+        "south": { "uv": [8, 2, 12, 4], "texture": "#hat" },
+        "east": { "uv": [12, 0, 16, 2], "texture": "#hat" },
+        "west": { "uv": [12, 2, 16, 4], "texture": "#hat" }
+      }
+    }
+  ]
+}

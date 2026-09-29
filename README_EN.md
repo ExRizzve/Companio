@@ -1,12 +1,12 @@
 <div align="center">
 
-[Русский](README.md) · [English](README_EN.md)
+[Р СѓСЃСЃРєРёР№](README.md) В· [English](README_EN.md)
 
 # Companio
 
 A flying companion wearing any Minecraft player's head.
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-26.3_·_26.2_·_26.1.2_·_26.1.1_·_26.1_·_1.21.11_·_1.21.10_·_1.21.9_·_1.21.8-62B47A?style=flat-square)](#installation)
+[![Minecraft](https://img.shields.io/badge/Minecraft-26.3_В·_26.2_В·_26.1.2_В·_26.1.1_В·_26.1_В·_1.21.11_В·_1.21.10_В·_1.21.9_В·_1.21.8-62B47A?style=flat-square)](#installation)
 [![Fabric](https://img.shields.io/badge/Loader-Fabric-DBD0B4?style=flat-square)](https://fabricmc.net/)
 [![NeoForge](https://img.shields.io/badge/Loader-NeoForge-F16436?style=flat-square)](https://neoforged.net/)
 [![Environment](https://img.shields.io/badge/Environment-Client-4C8BF5?style=flat-square)](#installation)
@@ -43,9 +43,10 @@ The mod is entirely client-side. Nothing needs to be installed on the server or 
 | `/companio name <name>` | Set a name up to 32 characters long |
 | `/companio name clear` | Remove the name |
 | `/companio event` | Start a random event |
-| `/companio event spin` | Perform a full 360° spin |
+| `/companio event spin` | Perform a full 360В° spin |
 | `/companio event twirl` | Perform an extended spin |
 | `/companio event orbit` | Fly around the owner |
+| `/companio hat <number> <hat>` | Put a hat on: `straw`, `cylinder`, `scarecrow`, `wreath`, `nimbus`, `diving_mask` or `none` |
 | `/companio reload` | Reload the configuration |
 | `/companio remove` | Remove the companion |
 
@@ -55,20 +56,24 @@ The mod is entirely client-side. Nothing needs to be installed on the server or 
 
 - Minecraft Java Edition `26.3`, `26.2`, `26.1.2`, `26.1.1`, `26.1`, `1.21.11`, `1.21.10`, `1.21.9` or `1.21.8`;
 - Fabric Loader `0.19.3` or newer;
-- Fabric API for your Minecraft version.
+- Fabric API for your Minecraft version;
+- [Cloth Config](https://modrinth.com/mod/cloth-config).
 
-Files are named like `companio-1.3+1.21.10.jar`.
+Files are named like `companio-1.4+1.21.10.jar`.
 
 ### NeoForge
 
 - the same Minecraft versions as Fabric;
-- NeoForge for your Minecraft version.
+- NeoForge for your Minecraft version;
+- [Cloth Config](https://modrinth.com/mod/cloth-config).
 
-Files are named like `companio-1.3+26.2-neoforge.jar`. Fabric API is not needed.
+Files are named like `companio-1.4+26.2-neoforge.jar`. Fabric API is not needed.
 
 Download the JAR matching your version and loader from [Releases](../../releases) and place it in `.minecraft/mods`. Companio does not need to be installed on the server.
 
 ## Configuration
+
+A **Companio** button in the pause menu (`Esc`) opens a [Cloth Config](https://modrinth.com/mod/cloth-config) screen with three tabs: companions (a list you add rows to, each with a username, display name and hat), flight settings, and hat placement. Everything is adjusted with sliders. Companions are stored in the configuration, so they come back after rejoining a world. Commands edit the same configuration.
 
 The following file is created after the first launch:
 
@@ -102,7 +107,7 @@ Build everything and collect the JARs in `dist`:
 ```
 
 > [!NOTE]
-> The first NeoForge build takes 20–40 minutes per Minecraft version, because its toolchain decompiles and recompiles the client. After that the result is cached and builds take seconds. For `1.21.x` targets Gradle downloads JDK 21 automatically if needed.
+> The first NeoForge build takes 20вЂ“40 minutes per Minecraft version, because its toolchain decompiles and recompiles the client. After that the result is cached and builds take seconds. For `1.21.x` targets Gradle downloads JDK 21 automatically if needed.
 
 ## Project layout
 

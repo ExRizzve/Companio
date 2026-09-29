@@ -1,0 +1,21 @@
+{
+  "textures": {
+    "hat": "companio:item/hats/nimbus",
+    "particle": "companio:item/hats/nimbus"
+  },
+  "elements": [
+    {
+      "name": "halo",
+      "from": [1, 14.5, 1],
+      "to": [15, 15, 15],
+      "faces": {
+        "up": { "uv": [0, 0, 8, 8], "texture": "#hat" },
+        "down": { "uv": [8, 8, 16, 16], "texture": "#hat" },
+        "north": { "uv": [0, 8, 8, 8.5], "texture": "#hat" },
+        "south": { "uv": [0, 8, 8, 8.5], "texture": "#hat" },
+        "east": { "uv": [0, 8, 8, 8.5], "texture": "#hat" },
+        "west": { "uv": [0, 8, 8, 8.5], "texture": "#hat" }
+      }
+    }
+  ]
+}

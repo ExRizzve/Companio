@@ -1,0 +1,34 @@
+{
+  "textures": {
+    "hat": "companio:item/hats/cylinder",
+    "particle": "companio:item/hats/cylinder"
+  },
+  "elements": [
+    {
+      "name": "brim",
+      "from": [2, 11.5, 2],
+      "to": [14, 12.5, 14],
+      "faces": {
+        "up": { "uv": [4, 5.667, 8, 9.667], "texture": "#hat" },
+        "down": { "uv": [8, 5.667, 12, 9.667], "texture": "#hat" },
+        "north": { "uv": [0, 9.667, 4, 10], "texture": "#hat" },
+        "south": { "uv": [4, 9.667, 8, 10], "texture": "#hat" },
+        "east": { "uv": [8, 9.667, 12, 10], "texture": "#hat" },
+        "west": { "uv": [12, 9.667, 16, 10], "texture": "#hat" }
+      }
+    },
+    {
+      "name": "crown",
+      "from": [4, 12.5, 4],
+      "to": [12, 20, 12],
+      "faces": {
+        "up": { "uv": [2.667, 0, 5.333, 2.667], "texture": "#hat" },
+        "down": { "uv": [5.333, 0, 8, 2.667], "texture": "#hat" },
+        "north": { "uv": [0, 2.667, 2.667, 5.333], "texture": "#hat" },
+        "east": { "uv": [2.667, 2.667, 5.333, 5.333], "texture": "#hat" },
+        "south": { "uv": [5.333, 2.667, 8, 5.333], "texture": "#hat" },
+        "west": { "uv": [8, 2.667, 10.667, 5.333], "texture": "#hat" }
+      }
+    }
+  ]
+}

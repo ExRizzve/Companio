@@ -7,9 +7,11 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import out.rizzve.companio.Companio;
 import out.rizzve.companio.client.command.CompanioCommand;
+import out.rizzve.companio.client.companion.CompanionBootstrap;
 import out.rizzve.companio.client.companion.CompanionController;
 import out.rizzve.companio.client.config.CompanioConfig;
 import out.rizzve.companio.client.config.ConfigManager;
+import out.rizzve.companio.client.gui.PauseScreenButton;
 import out.rizzve.companio.client.skin.MojangProfileService;
 
 @Mod(value = Companio.MOD_ID, dist = Dist.CLIENT)
@@ -19,8 +21,10 @@ public final class CompanioNeoForgeClient {
         CompanioConfig config = configManager.load();
         CompanionController controller = new CompanionController(config);
         MojangProfileService profileService = new MojangProfileService();
+        CompanionBootstrap bootstrap = new CompanionBootstrap(controller, configManager, profileService);
 
         CompanioCommand.register(controller, profileService, configManager);
-        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post event) -> controller.tick(Minecraft.getInstance()));
+        PauseScreenButton.register(controller, configManager, profileService);
+        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post event) -> bootstrap.tick(Minecraft.getInstance()));
     }
 }

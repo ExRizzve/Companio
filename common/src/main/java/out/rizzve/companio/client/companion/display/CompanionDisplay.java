@@ -12,8 +12,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
-import out.rizzve.companio.client.skin.ProfileCompat;
 import org.joml.Vector3f;
+import out.rizzve.companio.Companio;
+import out.rizzve.companio.client.companion.CompanionHat;
+import out.rizzve.companio.client.config.HatPlacement;
+import out.rizzve.companio.client.skin.ProfileCompat;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,9 +25,12 @@ public final class CompanionDisplay {
     private static final Transformation HEAD_SCALE = new Transformation(
             new Vector3f(), new Quaternionf(), new Vector3f(1.05F), new Quaternionf());
     private Display.ItemDisplay head;
+    private Display.ItemDisplay hat;
     private Display.TextDisplay name;
     private ClientLevel level;
     private String customName;
+    private CompanionHat companionHat = CompanionHat.NONE;
+    private HatPlacement hatPlacement = HatPlacement.DEFAULT;
 
     public void spawn(ClientLevel level, Vec3 position, float yaw, GameProfile profile) {
         discard();
@@ -42,6 +48,7 @@ public final class CompanionDisplay {
         head.setPosRotInterpolationDuration(3);
         move(position, yaw);
         level.addEntity(head);
+        refreshHat();
         refreshName();
     }
 
@@ -58,6 +65,11 @@ public final class CompanionDisplay {
         head.setPos(position);
         head.setYRot(yaw);
         head.setXRot(0.0F);
+        if (hat != null) {
+            hat.setPos(position);
+            hat.setYRot(yaw);
+            hat.setXRot(0.0F);
+        }
         if (name != null) name.setPos(position.add(0.0, 0.72, 0.0));
     }
 
@@ -66,12 +78,51 @@ public final class CompanionDisplay {
         refreshName();
     }
 
+    public void setHat(CompanionHat companionHat) {
+        this.companionHat = companionHat;
+        refreshHat();
+    }
+
+    public void setHatPlacement(HatPlacement hatPlacement) {
+        if (this.hatPlacement.equals(hatPlacement)) return;
+        this.hatPlacement = hatPlacement;
+        if (hat != null) hat.setTransformation(hatTransformation());
+    }
+
+    private Transformation hatTransformation() {
+        return new Transformation(
+                new Vector3f((float) hatPlacement.offsetX(), (float) hatPlacement.offsetY(), (float) hatPlacement.offsetZ()),
+                new Quaternionf(),
+                new Vector3f((float) hatPlacement.scale()),
+                new Quaternionf());
+    }
+
     public void discard() {
         discardEntity(head);
+        discardEntity(hat);
         discardEntity(name);
         head = null;
+        hat = null;
         name = null;
         level = null;
+    }
+
+    private void refreshHat() {
+        discardEntity(hat);
+        hat = null;
+        if (companionHat.model() == null || head == null || level == null) return;
+        ItemStack item = new ItemStack(Items.PAPER);
+        ItemModelCompat.apply(item, Companio.MOD_ID, companionHat.model());
+        hat = new Display.ItemDisplay(DisplayTypes.itemDisplay(), level);
+        hat.setId(ENTITY_IDS.getAndDecrement());
+        hat.setItemStack(item);
+        hat.setItemTransform(ItemDisplayContext.FIXED);
+        hat.setTransformation(hatTransformation());
+        hat.setViewRange(1.5F);
+        hat.setPosRotInterpolationDuration(3);
+        hat.setPos(head.position());
+        hat.setYRot(head.getYRot());
+        level.addEntity(hat);
     }
 
     private void refreshName() {
